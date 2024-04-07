@@ -1,118 +1,65 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {StatusBar, StyleSheet} from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+import SplashScreen from './src/screens/SplashScreen';
+import MessageScreen from './src/screens/MessageScreen';
+import SignInScreen from './src/screens/SignInScreen';
+import SignUpScreen from './src/screens/SignUpScreen';
+import SearchScreen from './src/screens/SearchScreen';
+import TabNavigator from './src/navigation/TabNavigator';
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import './src/core/fontawesome';
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+export type RootStackParamList = {
+  SplashScreen: undefined;
+  TabNavigator: undefined;
+  MessageScreen: undefined;
+  SearchScreen: undefined;
+  SignInScreen: undefined;
+  SignUpScreen: undefined;
+};
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+const LightTheme = {
+  ...DefaultTheme,
+  dark: false,
+  colors: {
+    ...DefaultTheme.colors,
+    background: 'white',
+  },
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const App = () => {
+  const [initialized, setInitialized] = React.useState(true);
+  const [authenticated, setAuthenticated] = React.useState(false);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer theme={LightTheme}>
+      <StatusBar barStyle={'dark-content'} />
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        {!initialized ? (
+          <Stack.Screen name="SplashScreen" component={SplashScreen} />
+        ) : !authenticated ? (
+          <>
+            <Stack.Screen name="SignInScreen" component={SignInScreen} />
+            <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            <Stack.Screen name="MessageScreen" component={MessageScreen} />
+            <Stack.Screen name="SearchScreen" component={SearchScreen} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+const styles = StyleSheet.create({});
 
 export default App;
