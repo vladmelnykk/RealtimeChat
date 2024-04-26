@@ -17,6 +17,8 @@ import {RootStackParamList} from '../../App';
 import Input from '../common/Input';
 import LoginButton from '../common/LoginButton';
 import {ISignUpData, passwordRegex, usernameRegex} from './SignUpScreen';
+import API from '../core/Authorization.service';
+import Authorization from '../core/Authorization.service';
 
 type SignInScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -93,7 +95,8 @@ const SignInScreen: React.FC<SignInScreenProps> = ({navigation}) => {
     setData(dataInitialState);
 
     // Make request to server
-    // ...
+
+    Authorization.signIn(data);
   };
 
   return (
