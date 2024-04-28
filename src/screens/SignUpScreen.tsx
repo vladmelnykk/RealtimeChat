@@ -12,6 +12,8 @@ import Input from '../common/Input';
 import LoginButton from '../common/LoginButton';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
+import Authorization from '../core/Authorization.service';
+import useStore from '../core/store';
 
 type SignUpScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -56,6 +58,8 @@ export const passwordRegex = /^.{8,}$/;
 const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
   const [data, setData] = React.useState<ISignUpData>(dataInitialState);
   const [errors, setErrors] = React.useState<ISignUpError>(errorInitialState);
+
+  const login = useStore(store => store.login);
 
   const handleChangeText = (name: keyof ISignUpData, value: string) => {
     setData(prev => ({...prev, [name]: value}));
@@ -102,14 +106,22 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
     return true;
   };
 
-  const onSignUp = () => {
+  const onSignUp = async () => {
     let isValid = true;
     for (const key in data) {
       if (Object.prototype.hasOwnProperty.call(data, key)) {
         isValid = checkIsValid(key as keyof ISignUpData) ? isValid : false;
       }
     }
-    // setData(dataInitialState);
+
+    if (!isValid) {
+      return;
+    }
+
+    const user = await Authorization.signUp(data);
+    user && login(user);
+
+    setData(dataInitialState);
   };
 
   return (

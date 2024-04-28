@@ -19,6 +19,7 @@ import LoginButton from '../common/LoginButton';
 import {ISignUpData, passwordRegex, usernameRegex} from './SignUpScreen';
 import API from '../core/Authorization.service';
 import Authorization from '../core/Authorization.service';
+import useStore from '../core/store';
 
 type SignInScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -49,6 +50,8 @@ const SignInScreen: React.FC<SignInScreenProps> = ({navigation}) => {
   const [data, setData] = React.useState<ISignInData>(dataInitialState);
   const [errors, setErrors] = React.useState<ISignInError>(errorInitialState);
 
+  const login = useStore(store => store.login);
+
   const handleChangeText = (name: keyof ISignUpData, value: string) => {
     setData(prev => ({...prev, [name]: value}));
 
@@ -72,7 +75,7 @@ const SignInScreen: React.FC<SignInScreenProps> = ({navigation}) => {
     return true;
   };
 
-  const onSignIn = () => {
+  const onSignIn = async () => {
     const {username, password} = data;
     let isValid = true;
     isValid = checkIsPattern('username', usernameRegex) ? isValid : false;
@@ -92,11 +95,14 @@ const SignInScreen: React.FC<SignInScreenProps> = ({navigation}) => {
     if (!isValid) {
       return;
     }
-    setData(dataInitialState);
 
     // Make request to server
 
-    Authorization.signIn(data);
+    const user = await Authorization.signIn(data);
+    user && login(user);
+
+    // Reset form
+    setData(dataInitialState);
   };
 
   return (

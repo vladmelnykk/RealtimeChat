@@ -12,6 +12,7 @@ import SearchScreen from './src/screens/SearchScreen';
 import TabNavigator from './src/navigation/TabNavigator';
 
 import './src/core/fontawesome';
+import useStore from './src/core/store';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
@@ -35,7 +36,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
   const [initialized, setInitialized] = React.useState(true);
-  const [authenticated, setAuthenticated] = React.useState(false);
+
+  const authenticated = useStore(store => store.authenticated);
 
   return (
     <NavigationContainer theme={LightTheme}>
@@ -59,7 +61,5 @@ const App = () => {
     </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default App;
