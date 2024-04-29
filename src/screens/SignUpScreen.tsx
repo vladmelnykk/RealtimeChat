@@ -59,7 +59,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
   const [data, setData] = React.useState<ISignUpData>(dataInitialState);
   const [errors, setErrors] = React.useState<ISignUpError>(errorInitialState);
 
-  const login = useStore(store => store.login);
+  const login = useStore(state => state.login);
 
   const handleChangeText = (name: keyof ISignUpData, value: string) => {
     setData(prev => ({...prev, [name]: value}));
@@ -118,8 +118,15 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
       return;
     }
 
-    const user = await Authorization.signUp(data);
-    user && login(user);
+    const response = await Authorization.signUp(data);
+    if (response) {
+      const credentials = {
+        username: data.username,
+        password: data.password,
+      };
+
+      login(credentials, response.user);
+    }
 
     setData(dataInitialState);
   };

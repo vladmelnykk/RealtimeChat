@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StatusBar, StyleSheet} from 'react-native';
 
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
@@ -35,9 +35,13 @@ const LightTheme = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
-  const [initialized, setInitialized] = React.useState(true);
+  const initialized = useStore(state => state.initialized);
+  const init = useStore(state => state.init);
+  const authenticated = useStore(state => state.authenticated);
 
-  const authenticated = useStore(store => store.authenticated);
+  useEffect(() => {
+    init();
+  });
 
   return (
     <NavigationContainer theme={LightTheme}>

@@ -19,7 +19,6 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({navigation, route}) => ({
-        headerShown: false,
         tabBarStyle: {height: 80},
         tabBarShowLabel: false,
         tabBarIcon: ({focused, size, color}) => {
@@ -59,10 +58,23 @@ const TabNavigator = () => {
             />
           </TouchableOpacity>
         ),
+        headerTitleAlign: 'center',
       })}>
-      <Tab.Screen name="RequestScreen" component={RequestScreen} />
-      <Tab.Screen name="ProfileScreen" component={ProfileScreen} />
-      <Tab.Screen name="FriendScreen" component={FriendScreen} />
+      <Tab.Screen
+        name="RequestScreen"
+        component={RequestScreen}
+        options={{title: 'Requests'}}
+      />
+      <Tab.Screen
+        name="FriendScreen"
+        component={FriendScreen}
+        options={{title: 'Friends'}}
+      />
+      <Tab.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{title: 'Profile'}}
+      />
     </Tab.Navigator>
   );
 };

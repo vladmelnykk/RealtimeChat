@@ -50,7 +50,7 @@ const SignInScreen: React.FC<SignInScreenProps> = ({navigation}) => {
   const [data, setData] = React.useState<ISignInData>(dataInitialState);
   const [errors, setErrors] = React.useState<ISignInError>(errorInitialState);
 
-  const login = useStore(store => store.login);
+  const login = useStore(state => state.login);
 
   const handleChangeText = (name: keyof ISignUpData, value: string) => {
     setData(prev => ({...prev, [name]: value}));
@@ -98,8 +98,16 @@ const SignInScreen: React.FC<SignInScreenProps> = ({navigation}) => {
 
     // Make request to server
 
-    const user = await Authorization.signIn(data);
-    user && login(user);
+    const response = await Authorization.signIn(data);
+
+    if (response) {
+      const credentials = {
+        username: data.username,
+        password: data.password,
+      };
+
+      login(credentials, response.user);
+    }
 
     // Reset form
     setData(dataInitialState);
