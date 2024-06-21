@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import User
+from rest_framework import serializers
+from .models import User, Connection
+
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.backends import TokenBackend
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class SignUpSerializer(serializers.ModelSerializer):
@@ -35,3 +41,40 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_name(self, obj):
         return f'{obj.first_name} {obj.last_name}'
+
+
+class SearchSerializer(UserSerializer):
+    status = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['username', 'name', 'thumbnail', 'status']
+
+    def get_status(self, obj):
+        if obj.pending_them:
+            return 'pending-them'
+        elif obj.pending_me:
+            return 'pending-me'
+        elif obj.connected:
+            return 'connected'
+        return 'no-connection'
+
+
+class RequestSerializer(serializers.ModelSerializer):
+
+    sender = UserSerializer()
+    receiver = UserSerializer()
+
+    class Meta:
+        model = Connection
+        fields = ['id', 'sender', 'receiver', 'created']
+
+
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    def validate(self, attrs):
+        refresh = attrs['refresh']
+        refresh_token = RefreshToken(refresh)
+
+        data = super().validate(attrs)
+        data['user_id'] = refresh_token['user_id']  # Добавляем user_id в ответ
+        return data

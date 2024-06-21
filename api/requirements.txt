@@ -1,0 +1,9 @@
+channels
+daphne
+channels-redis
+django-channels-jwt-auth-middleware
+django
+pillow
+djangorestframework
+djangorestframework-simplejwt
+
