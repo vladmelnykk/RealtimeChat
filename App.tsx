@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StatusBar, StyleSheet} from 'react-native';
+import {StatusBar} from 'react-native';
 
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -12,7 +12,7 @@ import SearchScreen from './src/screens/SearchScreen';
 import TabNavigator from './src/navigation/TabNavigator';
 
 import './src/core/fontawesome';
-import useStore from './src/core/store';
+import useStore from './src/core/store/store';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
@@ -41,7 +41,7 @@ const App = () => {
 
   useEffect(() => {
     init();
-  });
+  }, []);
 
   return (
     <NavigationContainer theme={LightTheme}>
@@ -58,7 +58,15 @@ const App = () => {
           <>
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
             <Stack.Screen name="MessageScreen" component={MessageScreen} />
-            <Stack.Screen name="SearchScreen" component={SearchScreen} />
+            <Stack.Screen
+              name="SearchScreen"
+              component={SearchScreen}
+              options={{
+                headerShown: true,
+                title: 'Search',
+                headerTitleAlign: 'center',
+              }}
+            />
           </>
         )}
       </Stack.Navigator>
