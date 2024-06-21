@@ -21,6 +21,12 @@ export type requestConnectionType = {
   id: number;
   created: string;
 };
+export type friendType = {
+  id: number;
+  friend: User;
+  preview: string | null;
+  updated: string;
+};
 
 export interface storeState {
   initialized: boolean;
@@ -56,6 +62,10 @@ export interface storeState {
   setRequestList: (data: requestConnectionType[]) => void;
   requestConnect: (username: string) => void;
   requestAccept: (username: string) => void;
+
+  // Friends
+  friendList: friendType[] | null;
+  setFriendList: (data: friendType[]) => void;
 
   // Thumbnail
   uploadThumbnail: (file: Asset) => void;
@@ -134,6 +144,11 @@ const useStore = create<storeState>((set, get) => ({
           source: 'request.list',
         }),
       );
+      socket.send(
+        JSON.stringify({
+          source: 'friend.list',
+        }),
+      );
     };
 
     socket.onclose = () => {
@@ -162,6 +177,7 @@ const useStore = create<storeState>((set, get) => ({
         'request.connect': get().changeUserStatus,
         'request.list': get().setRequestList,
         'request.accept': get().responseRequestAccept,
+        'friend.list': get().setFriendList,
       };
 
       const response = JSON.parse(event.data);
@@ -321,6 +337,14 @@ const useStore = create<storeState>((set, get) => ({
     }
   },
 
+  // --------------------
+  //    Friend
+  // --------------------
+
+  friendList: null,
+  setFriendList: data => {
+    set({friendList: data});
+  },
   // --------------------
   //    Thumbnail
   // --------------------

@@ -6,7 +6,7 @@ from django.core.files.base import ContentFile
 from asgiref.sync import async_to_sync
 from django.db.models import Q, Exists, OuterRef
 
-from .serializers import UserSerializer, SearchSerializer, RequestSerializer
+from .serializers import UserSerializer, SearchSerializer, RequestSerializer, FriendSerializer
 from .models import User, Connection
 
 
@@ -49,10 +49,23 @@ class ChatConsumer(WebsocketConsumer):
             self.receive_request_connect(data)
         elif data_source == 'request.list':
             self.receive_request_list()
+        elif data_source == 'friend.list':
+            self.receive_friend_list()
         elif data_source == 'request.accept':
             self.receive_request_accept(data)
         elif data_source == 'search':
             self.receive_search(data)
+
+    def receive_friend_list(self):
+        user = self.scope["user"]
+
+        connections = Connection.objects.filter(
+            Q(sender=user) | Q(receiver=user), accepted=True)
+
+        serialized = FriendSerializer(
+            connections, context={'user': user}, many=True)
+
+        self.send_group(self.username, 'friend.list', serialized.data)
 
     def receive_request_list(self):
 
@@ -147,9 +160,6 @@ class ChatConsumer(WebsocketConsumer):
             ))
 
         )
-        # pending_me= ...
-        # connected= ...
-
         # serialized results
 
         serialized = SearchSerializer(users, many=True)

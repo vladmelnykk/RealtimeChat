@@ -70,6 +70,26 @@ class RequestSerializer(serializers.ModelSerializer):
         fields = ['id', 'sender', 'receiver', 'created']
 
 
+class FriendSerializer(serializers.ModelSerializer):
+    friend = serializers.SerializerMethodField()
+    preview = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Connection
+        fields = ['id', 'friend', 'preview', 'updated']
+
+    def get_friend(self, obj):
+        if self.context['user'] == obj.sender:
+            return UserSerializer(obj.receiver).data
+        elif self.context['user'] == obj.receiver:
+            return UserSerializer(obj.sender).data
+        else:
+            print('Error: No user in friend serializer')
+
+    def get_preview(self, obj):
+        return 'hi friend, it\'s me, how are you? :)  What is your name? And your age? or something like that'
+
+
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):
     def validate(self, attrs):
         refresh = attrs['refresh']
