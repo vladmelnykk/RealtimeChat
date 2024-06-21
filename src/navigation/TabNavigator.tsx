@@ -1,12 +1,19 @@
 import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen';
+import {
+  BottomTabScreenProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 import ProfileScreen from '../screens/ProfileScreen';
 import FriendScreen from '../screens/FriendScreen';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import RequestScreen from '../screens/RequestScreen';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
-import {Image, TouchableOpacity} from 'react-native';
+import {TouchableOpacity} from 'react-native';
+import useStore from '../core/store/store';
+import Thumbnail from '../components/Thumbnail';
+import {CompositeScreenProps} from '@react-navigation/native';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../App';
 
 type RootTabParamList = {
   RequestScreen: undefined;
@@ -14,8 +21,29 @@ type RootTabParamList = {
   FriendScreen: undefined;
 };
 
+type TabScreenProps = CompositeScreenProps<
+  NativeStackScreenProps<RootStackParamList, 'TabNavigator'>,
+  BottomTabScreenProps<RootTabParamList>
+>;
+
 const Tab = createBottomTabNavigator<RootTabParamList>();
-const TabNavigator = () => {
+const TabNavigator: React.FC<TabScreenProps> = ({navigation}) => {
+  const socketConnect = useStore(state => state.socketConnect);
+  const socketClose = useStore(state => state.socketClose);
+  const user = useStore(state => state.user);
+
+  React.useEffect(() => {
+    socketConnect();
+
+    return () => {
+      socketClose();
+    };
+  }, []);
+
+  const onSearch = () => {
+    navigation.navigate('SearchScreen');
+  };
+
   return (
     <Tab.Navigator
       screenOptions={({navigation, route}) => ({
@@ -29,13 +57,12 @@ const TabNavigator = () => {
             ProfileScreen: 'user',
             FriendScreen: 'inbox',
           };
-
           const icon = icons[route.name];
           return <FontAwesomeIcon icon={icon} color={color} size={28} />;
         },
         tabBarActiveTintColor: '#202020',
         headerRight: () => (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onSearch}>
             <FontAwesomeIcon
               icon="magnifying-glass"
               color="#404040"
@@ -46,15 +73,13 @@ const TabNavigator = () => {
         headerRightContainerStyle: {paddingRight: 16},
         headerLeftContainerStyle: {paddingLeft: 16},
         headerLeft: () => (
-          <TouchableOpacity>
-            <Image
-              source={require('../assets/profile.png')}
-              style={{
-                width: 28,
-                height: 28,
-                backgroundColor: '#e0e0e0',
-                borderRadius: 14,
-              }}
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('ProfileScreen');
+            }}>
+            <Thumbnail
+              url={user?.thumbnail ? user.thumbnail : null}
+              size={28}
             />
           </TouchableOpacity>
         ),

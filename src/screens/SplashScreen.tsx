@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import Title from '../common/Title';
+import Title from '../components/Title';
 
 const SplashScreen = () => {
   const translateY = new Animated.Value(0);
