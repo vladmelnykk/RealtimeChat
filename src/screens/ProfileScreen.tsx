@@ -1,20 +1,31 @@
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React from 'react';
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
-import useStore from '../core/store';
+import useStore from '../core/store/store';
+import Thumbnail from '../components/Thumbnail';
 
 const ProfileScreen = () => {
   const logout = useStore(state => state.logout);
   const user = useStore(state => state.user);
+  const uploadThumbnail = useStore(state => state.uploadThumbnail);
 
   return (
     <View style={styles.screenContainer}>
       <TouchableOpacity
         onPress={async () => {
-          const result = await launchImageLibrary({mediaType: 'photo'});
+          const response = await launchImageLibrary({
+            mediaType: 'photo',
+            includeBase64: true,
+          });
+          if (response.didCancel) return;
+
+          if (response.assets) {
+            const file = response.assets[0];
+            uploadThumbnail(file);
+          }
         }}>
-        <Image source={require('../assets/profile.png')} style={styles.image} />
+        <Thumbnail url={user?.thumbnail ? user.thumbnail : null} size={180} />
         <View style={styles.editIconContainer}>
           <FontAwesomeIcon icon={'pencil'} size={15} color={'#d0d0d0'} />
         </View>
@@ -22,6 +33,7 @@ const ProfileScreen = () => {
 
       <Text style={styles.fullName}>{user?.name}</Text>
       <Text style={styles.username}>@{user?.username}</Text>
+      <Text style={styles.username}>@{user?.thumbnail}</Text>
       <TouchableOpacity style={styles.btnContainer} onPress={logout}>
         <FontAwesomeIcon
           icon={'right-from-bracket'}
@@ -39,12 +51,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  image: {
-    width: 180,
-    height: 180,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 90,
   },
   fullName: {
     textAlign: 'center',
