@@ -8,12 +8,12 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import Input from '../common/Input';
-import LoginButton from '../common/LoginButton';
+import Input from '../components/Input';
+import LoginButton from '../components/LoginButton';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
-import Authorization from '../core/Authorization.service';
-import useStore from '../core/store';
+import Authorization from '../core/services/Authorization.service';
+import useStore from '../core/store/store';
 
 type SignUpScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -125,7 +125,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
         password: data.password,
       };
 
-      login(credentials, response.user);
+      login(credentials, response.user, response.tokens);
     }
 
     setData(dataInitialState);

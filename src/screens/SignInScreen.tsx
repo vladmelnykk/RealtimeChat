@@ -11,15 +11,15 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import Title from '../common/Title';
+import Title from '../components/Title';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
-import Input from '../common/Input';
-import LoginButton from '../common/LoginButton';
+import Input from '../components/Input';
+import LoginButton from '../components/LoginButton';
 import {ISignUpData, passwordRegex, usernameRegex} from './SignUpScreen';
-import API from '../core/Authorization.service';
-import Authorization from '../core/Authorization.service';
-import useStore from '../core/store';
+import API from '../core/services/Authorization.service';
+import Authorization from '../core/services/Authorization.service';
+import useStore from '../core/store/store';
 
 type SignInScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -106,11 +106,10 @@ const SignInScreen: React.FC<SignInScreenProps> = ({navigation}) => {
         password: data.password,
       };
 
-      login(credentials, response.user);
+      login(credentials, response.user, response.tokens);
+      // Reset form
+      setData(dataInitialState);
     }
-
-    // Reset form
-    setData(dataInitialState);
   };
 
   return (
