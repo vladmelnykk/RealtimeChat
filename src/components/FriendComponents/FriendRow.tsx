@@ -6,6 +6,7 @@ import Thumbnail from '../Thumbnail';
 
 interface IFriendRowProps {
   item: friendType;
+  onPress?: () => void;
 }
 
 const formatTime = (date: string) => {
@@ -40,23 +41,24 @@ const formatTime = (date: string) => {
   return `${y}y ago`;
 };
 
-const FriendRow: React.FC<IFriendRowProps> = ({item}) => {
+const FriendRow: React.FC<IFriendRowProps> = ({item, onPress}) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <Cell>
         <Thumbnail url={item.friend.thumbnail} size={76} />
         <View style={styles.userInfo}>
-          <Text style={styles.name}>{item.friend.name}</Text>
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-            <Text style={styles.message} numberOfLines={2}>
-              {item.preview}
-            </Text>
+            <Text style={styles.name}>{item.friend.name}</Text>
             <Text style={styles.time}> {formatTime(item.updated)}</Text>
           </View>
+          <Text style={styles.message} numberOfLines={2}>
+            {item.preview}
+          </Text>
+          {/* <Text style={styles.time}> {formatTime(item.updated)}</Text> */}
         </View>
       </Cell>
     </TouchableOpacity>
@@ -73,16 +75,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
     marginBottom: 4,
+    flex: 0.8,
   },
   message: {
     color: '#606060',
-    flex: 0.8,
   },
   time: {
     color: '#909090',
     fontSize: 13,
     flex: 0.2,
-    // alignSelf: 'flex-start',
   },
 });
 

@@ -12,12 +12,12 @@ import SearchScreen from './src/screens/SearchScreen';
 import TabNavigator from './src/navigation/TabNavigator';
 
 import './src/core/fontawesome';
-import useStore from './src/core/store/store';
+import useStore, {User} from './src/core/store/store';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
   TabNavigator: undefined;
-  MessageScreen: undefined;
+  MessageScreen: {friend: User};
   SearchScreen: undefined;
   SignInScreen: undefined;
   SignUpScreen: undefined;
@@ -57,7 +57,11 @@ const App = () => {
         ) : (
           <>
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
-            <Stack.Screen name="MessageScreen" component={MessageScreen} />
+            <Stack.Screen
+              name="MessageScreen"
+              component={MessageScreen}
+              options={{headerShown: true}}
+            />
             <Stack.Screen
               name="SearchScreen"
               component={SearchScreen}

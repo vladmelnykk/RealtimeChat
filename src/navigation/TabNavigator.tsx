@@ -15,7 +15,7 @@ import {CompositeScreenProps} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 
-type RootTabParamList = {
+export type RootTabParamList = {
   RequestScreen: undefined;
   ProfileScreen: undefined;
   FriendScreen: undefined;

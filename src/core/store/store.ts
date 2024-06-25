@@ -237,6 +237,14 @@ const useStore = create<storeState>((set, get) => ({
         set({searchList: tempSearchList});
       }
     }
+
+    const socket = get().socket;
+
+    socket?.send(
+      JSON.stringify({
+        source: 'friend.list',
+      }),
+    );
   },
 
   // --------------------
