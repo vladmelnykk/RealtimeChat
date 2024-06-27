@@ -6,8 +6,8 @@ from django.core.files.base import ContentFile
 from asgiref.sync import async_to_sync
 from django.db.models import Q, Exists, OuterRef
 
-from .serializers import UserSerializer, SearchSerializer, RequestSerializer, FriendSerializer
-from .models import User, Connection
+from .serializers import UserSerializer, SearchSerializer, RequestSerializer, FriendSerializer, MessageSerializer
+from .models import User, Connection, Message
 
 
 class ChatConsumer(WebsocketConsumer):
@@ -49,6 +49,10 @@ class ChatConsumer(WebsocketConsumer):
             self.receive_request_connect(data)
         elif data_source == 'request.list':
             self.receive_request_list()
+        elif data_source == 'message.list':
+            self.receive_message_list(data)
+        elif data_source == 'message.send':
+            self.receive_message_send(data)
         elif data_source == 'friend.list':
             self.receive_friend_list()
         elif data_source == 'request.accept':
@@ -127,6 +131,80 @@ class ChatConsumer(WebsocketConsumer):
         self.send_group(connection.sender.username,
                         'request.accept', serialized.data)
 
+    def receive_message_send(self, data):
+        user = self.scope["user"]
+        message = data.get('message')
+        connectionId = data.get('connectionId')
+
+        try:
+            connection = Connection.objects.get(id=connectionId)
+        except Connection.DoesNotExist:
+            print('Connection does not exist')
+            return
+
+        message = Message.objects.create(
+            connection=connection, user=user, text=message)
+
+        # Send new message back to sender
+        recipient = connection.sender
+        if connection.sender == user:
+            recipient = connection.receiver
+
+        serialized_message = MessageSerializer(message, context={'user': user})
+
+        serialized_friend = UserSerializer(recipient)
+
+        data = {
+            'message': serialized_message.data,
+            'friend': serialized_friend.data
+        }
+
+        self.send_group(user.username, 'message.send', data)
+
+        # Send new message to receiver
+        serialized_message = MessageSerializer(
+            message, context={'user': recipient})
+
+        serialized_friend = UserSerializer(user)
+
+        data = {
+            'message': serialized_message.data,
+            'friend': serialized_friend.data
+        }
+
+        self.send_group(recipient.username, 'message.send', data)
+
+    def receive_message_list(self, data):
+        user = self.scope["user"]
+        connectionId = data.get("connectionId")
+
+        try:
+            connection = Connection.objects.get(id=connectionId)
+        except Connection.DoesNotExist:
+            print('Connection does not exist')
+            return
+
+        messages = Message.objects.filter(
+            connection=connection
+        ).order_by("-created")
+        # TODO:
+
+        serialized_messages = MessageSerializer(
+            messages, context={'user': user}, many=True)
+
+        recipient = connection.sender
+        if connection.sender == user:
+            recipient = connection.receiver
+
+        serialized_friend = UserSerializer(recipient)
+
+        data = {
+            'messages': serialized_messages.data,
+            'friend': serialized_friend.data
+        }
+
+        self.send_group(self.username, 'message.list', data)
+
     def receive_thumbnail(self, data):
         user = self.scope["user"]
         # Convert base64 data to django file
@@ -171,6 +249,7 @@ class ChatConsumer(WebsocketConsumer):
     #      Catch/all broadcast to client helpers
     # ----------------------------
 
+    # TODO:
     def send_group(self, group, source, data):
         response = {
             'type': 'broadcast_group',

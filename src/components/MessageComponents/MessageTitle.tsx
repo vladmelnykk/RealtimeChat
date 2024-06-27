@@ -10,8 +10,8 @@ interface IMessageTitleProps {
 const MessageTitle: React.FC<IMessageTitleProps> = ({friend}) => {
   return (
     <View style={styles.container}>
-      <Thumbnail size={36} url={friend.thumbnail} />
-      <Text>{friend.username}</Text>
+      <Thumbnail size={32} url={friend.thumbnail} />
+      <Text style={styles.username}>{friend.username}</Text>
     </View>
   );
 };
@@ -19,8 +19,14 @@ const MessageTitle: React.FC<IMessageTitleProps> = ({friend}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'red',
+  },
+  username: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 10,
+    color: '#202020',
   },
 });
 

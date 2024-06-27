@@ -17,7 +17,7 @@ import useStore, {User} from './src/core/store/store';
 export type RootStackParamList = {
   SplashScreen: undefined;
   TabNavigator: undefined;
-  MessageScreen: {friend: User};
+  MessageScreen: {friend: User; id: number};
   SearchScreen: undefined;
   SignInScreen: undefined;
   SignUpScreen: undefined;

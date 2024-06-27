@@ -52,7 +52,9 @@ const FriendRow: React.FC<IFriendRowProps> = ({item, onPress}) => {
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-            <Text style={styles.name}>{item.friend.name}</Text>
+            <Text style={styles.name} numberOfLines={1}>
+              {item.friend.name}
+            </Text>
             <Text style={styles.time}> {formatTime(item.updated)}</Text>
           </View>
           <Text style={styles.message} numberOfLines={2}>
@@ -75,7 +77,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
     marginBottom: 4,
-    flex: 0.8,
+    flex: 0.6,
   },
   message: {
     color: '#606060',
@@ -83,7 +85,9 @@ const styles = StyleSheet.create({
   time: {
     color: '#909090',
     fontSize: 13,
-    flex: 0.2,
+    flex: 0.4,
+    // flexGrow: 1,
+    textAlign: 'right',
   },
 });
 

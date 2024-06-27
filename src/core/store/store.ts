@@ -28,6 +28,13 @@ export type friendType = {
   updated: string;
 };
 
+export type messageType = {
+  id: number;
+  is_me: boolean;
+  text: string;
+  created: string;
+};
+
 export interface storeState {
   initialized: boolean;
   init: () => void;
@@ -50,6 +57,8 @@ export interface storeState {
   socketClose: () => void;
 
   responseRequestAccept: (data: requestConnectionType) => void;
+  responseMessageList: (data: {messages: messageType[]; friend: User}) => void;
+  responseMessageSend: (data: {message: messageType; friend: User}) => void;
 
   // Search
   searchList: searchUserType[] | null;
@@ -66,6 +75,11 @@ export interface storeState {
   // Friends
   friendList: friendType[] | null;
   setFriendList: (data: friendType[]) => void;
+
+  // Message
+  messageList: messageType[];
+  fetchMessageList: (connectionId: number) => void;
+  messageSend: (message: string, connectionId: number) => void;
 
   // Thumbnail
   uploadThumbnail: (file: Asset) => void;
@@ -178,6 +192,8 @@ const useStore = create<storeState>((set, get) => ({
         'request.list': get().setRequestList,
         'request.accept': get().responseRequestAccept,
         'friend.list': get().setFriendList,
+        'message.list': get().responseMessageList,
+        'message.send': get().responseMessageSend,
       };
 
       const response = JSON.parse(event.data);
@@ -246,6 +262,15 @@ const useStore = create<storeState>((set, get) => ({
       }),
     );
   },
+  responseMessageList: data => {
+    set({
+      messageList: [...get().messageList, ...data.messages],
+    });
+  },
+  responseMessageSend: data => {
+    const messageList = [data.message, ...get().messageList];
+    set({messageList});
+  },
 
   // --------------------
   //    Search
@@ -254,7 +279,6 @@ const useStore = create<storeState>((set, get) => ({
   searchList: null,
   changeUserStatus: data => {
     const user = get().user;
-    // TODO: There is a problem with [...null]
     const searchList = get().searchList;
 
     if (user?.username === data.sender.username) {
@@ -352,6 +376,35 @@ const useStore = create<storeState>((set, get) => ({
   friendList: null,
   setFriendList: data => {
     set({friendList: data});
+  },
+
+  // --------------------
+  //    Message
+  // --------------------
+
+  messageList: [],
+  fetchMessageList: connectionId => {
+    const messageList = get().messageList;
+    if (messageList.length !== 0) set({messageList: []});
+    const socket = get().socket;
+    socket?.send(
+      JSON.stringify({
+        source: 'message.list',
+        connectionId,
+      }),
+    );
+  },
+  messageSend: (message, connectionId) => {
+    if (message ?? connectionId) {
+      const socket = get().socket;
+      socket?.send(
+        JSON.stringify({
+          source: 'message.send',
+          message,
+          connectionId,
+        }),
+      );
+    }
   },
   // --------------------
   //    Thumbnail

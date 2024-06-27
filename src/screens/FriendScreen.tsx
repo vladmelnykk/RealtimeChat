@@ -31,7 +31,10 @@ const FriendScreen: React.FC<FriendScreenProps> = ({navigation}) => {
         renderItem={({item}) => (
           <FriendRow
             onPress={() => {
-              navigation.navigate('MessageScreen', {friend: item.friend});
+              navigation.navigate('MessageScreen', {
+                friend: item.friend,
+                id: item.id,
+              });
             }}
             item={item}
           />

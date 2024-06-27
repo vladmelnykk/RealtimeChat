@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework import serializers
-from .models import User, Connection
+from .models import User, Connection, Message
 
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.backends import TokenBackend
@@ -88,6 +88,17 @@ class FriendSerializer(serializers.ModelSerializer):
 
     def get_preview(self, obj):
         return 'hi friend, it\'s me, how are you? :)  What is your name? And your age? or something like that'
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    is_me = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Message
+        fields = ['id', 'is_me', 'text', 'created']
+
+    def get_is_me(self, obj):
+        return self.context['user'] == obj.user
 
 
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):
