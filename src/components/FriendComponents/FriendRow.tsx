@@ -3,43 +3,12 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {friendType} from '../../core/store/store';
 import Cell from '../Cell';
 import Thumbnail from '../Thumbnail';
+import utils from '../../core/utils';
 
 interface IFriendRowProps {
   item: friendType;
   onPress?: () => void;
 }
-
-const formatTime = (date: string) => {
-  const now = new Date().getTime();
-  const s = Math.abs(now - new Date(date).getTime()) / 1000;
-  // Seconds
-  if (s < 60) {
-    return 'now';
-  }
-  // Minutes
-  if (s < 60 * 60) {
-    let m = Math.floor(s / 60);
-    return `${m}m ago`;
-  }
-  // Hours
-  if (s < 60 * 60 * 24) {
-    let h = Math.floor(s / (60 * 60));
-    return `${h}h ago`;
-  }
-  // Days
-  if (s < 60 * 60 * 24 * 30) {
-    let d = Math.floor(s / (60 * 60 * 24));
-    return `${d}d ago`;
-  }
-  // Months
-  if (s < 60 * 60 * 24 * 30 * 12) {
-    let m = Math.floor(s / (60 * 60 * 24 * 30));
-    return `${m}m ago`;
-  }
-  // Years
-  let y = Math.floor(s / (60 * 60 * 24 * 30 * 12));
-  return `${y}y ago`;
-};
 
 const FriendRow: React.FC<IFriendRowProps> = ({item, onPress}) => {
   return (
@@ -55,7 +24,7 @@ const FriendRow: React.FC<IFriendRowProps> = ({item, onPress}) => {
             <Text style={styles.name} numberOfLines={1}>
               {item.friend.name}
             </Text>
-            <Text style={styles.time}> {formatTime(item.updated)}</Text>
+            <Text style={styles.time}> {utils.formatTime(item.updated)}</Text>
           </View>
           <Text style={styles.message} numberOfLines={2}>
             {item.preview}

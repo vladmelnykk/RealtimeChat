@@ -15,7 +15,6 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   index,
   message,
 }) => {
-  // TODO:
   return message.is_me ? (
     <MessageBubbleMe text={message.text} />
   ) : (

@@ -24,7 +24,7 @@ export type requestConnectionType = {
 export type friendType = {
   id: number;
   friend: User;
-  preview: string | null;
+  preview: string;
   updated: string;
 };
 
@@ -59,6 +59,7 @@ export interface storeState {
   responseRequestAccept: (data: requestConnectionType) => void;
   responseMessageList: (data: {messages: messageType[]; friend: User}) => void;
   responseMessageSend: (data: {message: messageType; friend: User}) => void;
+  responseFriendNew: (data: friendType) => void;
 
   // Search
   searchList: searchUserType[] | null;
@@ -77,8 +78,9 @@ export interface storeState {
   setFriendList: (data: friendType[]) => void;
 
   // Message
+  messageUsername: string | null;
   messageList: messageType[];
-  fetchMessageList: (connectionId: number) => void;
+  fetchMessageList: (connectionId: number, page?: number) => void;
   messageSend: (message: string, connectionId: number) => void;
 
   // Thumbnail
@@ -192,6 +194,7 @@ const useStore = create<storeState>((set, get) => ({
         'request.list': get().setRequestList,
         'request.accept': get().responseRequestAccept,
         'friend.list': get().setFriendList,
+        'friend.new': get().responseFriendNew,
         'message.list': get().responseMessageList,
         'message.send': get().responseMessageSend,
       };
@@ -253,23 +256,44 @@ const useStore = create<storeState>((set, get) => ({
         set({searchList: tempSearchList});
       }
     }
-
-    const socket = get().socket;
-
-    socket?.send(
-      JSON.stringify({
-        source: 'friend.list',
-      }),
-    );
   },
   responseMessageList: data => {
     set({
       messageList: [...get().messageList, ...data.messages],
+      messageUsername: data.friend.username,
     });
   },
   responseMessageSend: data => {
+    const username = data.friend.username;
+    const tempFriendList = get().friendList;
+
+    if (tempFriendList) {
+      const friendList = [...tempFriendList];
+      const friendIndex = friendList.findIndex(
+        item => item.friend.username === username,
+      );
+
+      if (friendIndex >= 0) {
+        const item = friendList[friendIndex];
+        item.preview = data.message.text;
+        item.updated = data.message.created;
+
+        friendList.splice(friendIndex, 1);
+        friendList.unshift(item);
+        set({friendList: friendList});
+      }
+    }
+    if (username !== get().messageUsername) return;
+
     const messageList = [data.message, ...get().messageList];
     set({messageList});
+  },
+  responseFriendNew: data => {
+    const tempFriendList = get().friendList;
+    if (tempFriendList) {
+      const friendList = [data, ...tempFriendList];
+      set({friendList});
+    }
   },
 
   // --------------------
@@ -382,15 +406,21 @@ const useStore = create<storeState>((set, get) => ({
   //    Message
   // --------------------
 
+  messageUsername: null,
   messageList: [],
-  fetchMessageList: connectionId => {
-    const messageList = get().messageList;
-    if (messageList.length !== 0) set({messageList: []});
+  fetchMessageList: (connectionId, page = 0) => {
+    if (page === 0) {
+      set({
+        messageList: [],
+        messageUsername: null,
+      });
+    }
     const socket = get().socket;
     socket?.send(
       JSON.stringify({
         source: 'message.list',
         connectionId,
+        page,
       }),
     );
   },

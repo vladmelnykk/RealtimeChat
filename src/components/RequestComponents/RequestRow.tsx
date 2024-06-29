@@ -4,14 +4,15 @@ import {requestConnectionType} from '../../core/store/store';
 import Cell from '../Cell';
 import Thumbnail from '../Thumbnail';
 import RequestAccept from './RequestAccept';
+import utils from '../../core/utils';
 
 interface IRequestRowProps {
   item: requestConnectionType;
 }
 
 const RequestRow: React.FC<IRequestRowProps> = ({item}) => {
+  // const [message] = React.useState<string>('Requested to connect with you');
   const message = 'Requested to connect with you';
-  const time = '1h ago';
 
   return (
     <Cell>
@@ -20,7 +21,9 @@ const RequestRow: React.FC<IRequestRowProps> = ({item}) => {
         <Text style={styles.name}>{item.sender.name}</Text>
         <Text style={styles.message}>
           {message}
-          <Text style={styles.time}> {time}</Text>
+          <Text style={styles.time}>
+            {' ' + utils.formatTime(item.created)}
+          </Text>
         </Text>
       </View>
 

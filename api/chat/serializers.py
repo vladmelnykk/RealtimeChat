@@ -73,6 +73,7 @@ class RequestSerializer(serializers.ModelSerializer):
 class FriendSerializer(serializers.ModelSerializer):
     friend = serializers.SerializerMethodField()
     preview = serializers.SerializerMethodField()
+    updated = serializers.SerializerMethodField()
 
     class Meta:
         model = Connection
@@ -86,8 +87,19 @@ class FriendSerializer(serializers.ModelSerializer):
         else:
             print('Error: No user in friend serializer')
 
+    def get_updated(self, obj):
+        if not hasattr(obj, 'latest_created'):
+            data = obj.updated
+        else:
+            # TODO: updated instead of created and change it
+            data = obj.latest_created
+        return data.isoformat()
+
     def get_preview(self, obj):
-        return 'hi friend, it\'s me, how are you? :)  What is your name? And your age? or something like that'
+
+        if not hasattr(obj, 'latest_text'):
+            return 'New connection'
+        return obj.latest_text
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -107,5 +119,5 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
         refresh_token = RefreshToken(refresh)
 
         data = super().validate(attrs)
-        data['user_id'] = refresh_token['user_id']  # Добавляем user_id в ответ
+        data['user_id'] = refresh_token['user_id']
         return data

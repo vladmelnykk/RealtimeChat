@@ -33,7 +33,6 @@ const ProfileScreen = () => {
 
       <Text style={styles.fullName}>{user?.name}</Text>
       <Text style={styles.username}>@{user?.username}</Text>
-      <Text style={styles.username}>@{user?.thumbnail}</Text>
       <TouchableOpacity style={styles.btnContainer} onPress={logout}>
         <FontAwesomeIcon
           icon={'right-from-bracket'}

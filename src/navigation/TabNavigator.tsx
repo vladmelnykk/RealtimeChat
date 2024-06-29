@@ -31,6 +31,7 @@ const TabNavigator: React.FC<TabScreenProps> = ({navigation}) => {
   const socketConnect = useStore(state => state.socketConnect);
   const socketClose = useStore(state => state.socketClose);
   const user = useStore(state => state.user);
+  const requestList = useStore(state => state.requestList);
 
   React.useEffect(() => {
     socketConnect();
@@ -88,7 +89,11 @@ const TabNavigator: React.FC<TabScreenProps> = ({navigation}) => {
       <Tab.Screen
         name="RequestScreen"
         component={RequestScreen}
-        options={{title: 'Requests'}}
+        options={{
+          title: 'Requests',
+          tabBarBadge:
+            requestList?.length === 0 ? undefined : requestList?.length,
+        }}
       />
       <Tab.Screen
         name="FriendScreen"

@@ -5,6 +5,8 @@ from channels.generic.websocket import WebsocketConsumer
 from django.core.files.base import ContentFile
 from asgiref.sync import async_to_sync
 from django.db.models import Q, Exists, OuterRef
+from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 from .serializers import UserSerializer, SearchSerializer, RequestSerializer, FriendSerializer, MessageSerializer
 from .models import User, Connection, Message
@@ -63,8 +65,16 @@ class ChatConsumer(WebsocketConsumer):
     def receive_friend_list(self):
         user = self.scope["user"]
 
+        latest_massage = Message.objects.filter(
+            connection=OuterRef('id')).order_by('-created')[:1]
+
         connections = Connection.objects.filter(
-            Q(sender=user) | Q(receiver=user), accepted=True)
+            Q(sender=user) | Q(receiver=user), accepted=True).annotate(
+                latest_text=latest_massage.values('text'),
+                latest_created=latest_massage.values('created')
+        ).order_by(
+            Coalesce('latest_created', 'created').desc()
+        )
 
         serialized = FriendSerializer(
             connections, context={'user': user}, many=True)
@@ -118,6 +128,7 @@ class ChatConsumer(WebsocketConsumer):
                 receiver=self.scope["user"]
             )
             connection.accepted = True
+            connection.updated = timezone.now()
             connection.save()
 
         except Connection.DoesNotExist:
@@ -130,6 +141,18 @@ class ChatConsumer(WebsocketConsumer):
 
         self.send_group(connection.sender.username,
                         'request.accept', serialized.data)
+
+        serialized_friend = FriendSerializer(
+            connection, context={'user': connection.receiver})
+
+        self.send_group(connection.receiver.username,
+                        'friend.new', serialized_friend.data)
+
+        serialized_friend = FriendSerializer(
+            connection, context={'user': connection.sender})
+
+        self.send_group(connection.sender.username,
+                        'friend.new', serialized_friend.data)
 
     def receive_message_send(self, data):
         user = self.scope["user"]
