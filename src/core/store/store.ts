@@ -60,6 +60,7 @@ export interface storeState {
   responseMessageList: (data: {messages: messageType[]; friend: User}) => void;
   responseMessageSend: (data: {message: messageType; friend: User}) => void;
   responseFriendNew: (data: friendType) => void;
+  responseMessageType: (data: {username: string}) => void;
 
   // Search
   searchList: searchUserType[] | null;
@@ -80,8 +81,12 @@ export interface storeState {
   // Message
   messageUsername: string | null;
   messageList: messageType[];
+  messageTyping: Date | null;
+  setMessageTyping: (data: Date | null) => void;
+  setMessageList: (data: messageType[]) => void;
   fetchMessageList: (connectionId: number, page?: number) => void;
   messageSend: (message: string, connectionId: number) => void;
+  messageType: (username: string) => void;
 
   // Thumbnail
   uploadThumbnail: (file: Asset) => void;
@@ -197,6 +202,7 @@ const useStore = create<storeState>((set, get) => ({
         'friend.new': get().responseFriendNew,
         'message.list': get().responseMessageList,
         'message.send': get().responseMessageSend,
+        'message.type': get().responseMessageType,
       };
 
       const response = JSON.parse(event.data);
@@ -219,6 +225,11 @@ const useStore = create<storeState>((set, get) => ({
     set({user: null});
     socket?.close();
     console.log('Socket closed');
+  },
+  responseMessageType: data => {
+    const messageUsername = get().messageUsername;
+    if (messageUsername !== data.username) return;
+    set({messageTyping: new Date()});
   },
 
   responseRequestAccept: data => {
@@ -286,7 +297,7 @@ const useStore = create<storeState>((set, get) => ({
     if (username !== get().messageUsername) return;
 
     const messageList = [data.message, ...get().messageList];
-    set({messageList});
+    set({messageTyping: null, messageList});
   },
   responseFriendNew: data => {
     const tempFriendList = get().friendList;
@@ -408,10 +419,18 @@ const useStore = create<storeState>((set, get) => ({
 
   messageUsername: null,
   messageList: [],
+  messageTyping: null,
+  setMessageTyping: data => {
+    set({messageTyping: data});
+  },
+  setMessageList: data => {
+    set({messageList: data});
+  },
   fetchMessageList: (connectionId, page = 0) => {
     if (page === 0) {
       set({
         messageList: [],
+        messageTyping: null,
         messageUsername: null,
       });
     }
@@ -435,6 +454,16 @@ const useStore = create<storeState>((set, get) => ({
         }),
       );
     }
+  },
+  messageType: username => {
+    const socket = get().socket;
+
+    socket?.send(
+      JSON.stringify({
+        source: 'message.type',
+        username,
+      }),
+    );
   },
   // --------------------
   //    Thumbnail

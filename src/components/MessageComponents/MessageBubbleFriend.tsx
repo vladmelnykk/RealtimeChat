@@ -1,22 +1,29 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Animated, Easing, StyleSheet, Text, View} from 'react-native';
 import Thumbnail from '../Thumbnail';
 import {User} from '../../core/store/store';
+import MessageTypeAnimation from './MessageTypeAnimation';
 
 interface MessageBubbleFriendProps {
   text: string;
   friend: User;
+  typing?: boolean;
 }
 
 const MessageBubbleFriend: React.FC<MessageBubbleFriendProps> = ({
   text,
   friend,
+  typing = false,
 }) => {
   return (
     <View style={styles.container}>
       <Thumbnail url={friend.thumbnail} size={42} />
       <View style={styles.messageBox}>
-        <Text style={styles.text}>{text}</Text>
+        {typing ? (
+          <MessageTypeAnimation />
+        ) : (
+          <Text style={styles.text}>{text}</Text>
+        )}
       </View>
       <View style={{flex: 1}} />
     </View>
@@ -42,6 +49,9 @@ const styles = StyleSheet.create({
     color: '#202020',
     fontSize: 16,
     lineHeight: 18,
+  },
+  flexRow: {
+    flexDirection: 'row',
   },
 });
 

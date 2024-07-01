@@ -10,7 +10,7 @@ import {
 
 interface IMessageInputProps {
   message: string;
-  setMessage: React.Dispatch<React.SetStateAction<string>>;
+  setMessage: (text: string) => void;
   onSend: () => void;
 }
 

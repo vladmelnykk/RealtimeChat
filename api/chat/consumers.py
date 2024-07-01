@@ -53,6 +53,8 @@ class ChatConsumer(WebsocketConsumer):
             self.receive_request_list()
         elif data_source == 'message.list':
             self.receive_message_list(data)
+        elif data_source == 'message.type':
+            self.receive_message_type(data)
         elif data_source == 'message.send':
             self.receive_message_send(data)
         elif data_source == 'friend.list':
@@ -196,6 +198,16 @@ class ChatConsumer(WebsocketConsumer):
         }
 
         self.send_group(recipient.username, 'message.send', data)
+
+    def receive_message_type(self, data):
+        user = self.scope["user"]
+        recipient_username = data.get('username')
+
+        data = {
+            'username': user.username
+        }
+
+        self.send_group(recipient_username, 'message.type', data)
 
     def receive_message_list(self, data):
         user = self.scope["user"]
