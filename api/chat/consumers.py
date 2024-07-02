@@ -212,6 +212,8 @@ class ChatConsumer(WebsocketConsumer):
     def receive_message_list(self, data):
         user = self.scope["user"]
         connectionId = data.get("connectionId")
+        page = data.get('page')
+        page_size = 10
 
         try:
             connection = Connection.objects.get(id=connectionId)
@@ -221,7 +223,7 @@ class ChatConsumer(WebsocketConsumer):
 
         messages = Message.objects.filter(
             connection=connection
-        ).order_by("-created")
+        ).order_by("-created")[page * page_size: (page + 1) * page_size]
         # TODO:
 
         serialized_messages = MessageSerializer(
@@ -233,8 +235,15 @@ class ChatConsumer(WebsocketConsumer):
 
         serialized_friend = UserSerializer(recipient)
 
+        messages_count = Message.objects.filter(
+            connection=connection
+        ).count()
+
+        next_page = page + \
+            1 if messages_count > (page + 1) * page_size else None
         data = {
             'messages': serialized_messages.data,
+            'next': next_page,
             'friend': serialized_friend.data
         }
 

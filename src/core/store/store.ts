@@ -57,7 +57,11 @@ export interface storeState {
   socketClose: () => void;
 
   responseRequestAccept: (data: requestConnectionType) => void;
-  responseMessageList: (data: {messages: messageType[]; friend: User}) => void;
+  responseMessageList: (data: {
+    messages: messageType[];
+    friend: User;
+    next: number;
+  }) => void;
   responseMessageSend: (data: {message: messageType; friend: User}) => void;
   responseFriendNew: (data: friendType) => void;
   responseMessageType: (data: {username: string}) => void;
@@ -82,6 +86,7 @@ export interface storeState {
   messageUsername: string | null;
   messageList: messageType[];
   messageTyping: Date | null;
+  messageNext: number | null;
   setMessageTyping: (data: Date | null) => void;
   setMessageList: (data: messageType[]) => void;
   fetchMessageList: (connectionId: number, page?: number) => void;
@@ -272,6 +277,7 @@ const useStore = create<storeState>((set, get) => ({
     set({
       messageList: [...get().messageList, ...data.messages],
       messageUsername: data.friend.username,
+      messageNext: data.next,
     });
   },
   responseMessageSend: data => {
@@ -417,6 +423,7 @@ const useStore = create<storeState>((set, get) => ({
   //    Message
   // --------------------
 
+  messageNext: null,
   messageUsername: null,
   messageList: [],
   messageTyping: null,
@@ -432,7 +439,10 @@ const useStore = create<storeState>((set, get) => ({
         messageList: [],
         messageTyping: null,
         messageUsername: null,
+        messageNext: null,
       });
+    } else {
+      set({messageNext: null});
     }
     const socket = get().socket;
     socket?.send(

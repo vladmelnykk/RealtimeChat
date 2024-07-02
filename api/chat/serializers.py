@@ -89,17 +89,19 @@ class FriendSerializer(serializers.ModelSerializer):
 
     def get_updated(self, obj):
         if not hasattr(obj, 'latest_created'):
+            print('not', obj.updated)
             data = obj.updated
         else:
             # TODO: updated instead of created and change it
-            data = obj.latest_created
+            print('else', obj.latest_created)
+            data = obj.latest_created or obj.updated
         return data.isoformat()
 
     def get_preview(self, obj):
-
+        message = 'New connection'
         if not hasattr(obj, 'latest_text'):
-            return 'New connection'
-        return obj.latest_text
+            return message
+        return obj.latest_text or message
 
 
 class MessageSerializer(serializers.ModelSerializer):

@@ -28,6 +28,7 @@ const MessageScreen: React.FC<MessageScreenProps> = ({navigation, route}) => {
   const [message, setMessage] = React.useState<string>('');
   const flatListRef = React.useRef<FlatList>(null);
 
+  const messageNext = useStore(state => state.messageNext);
   const messageList = useStore(state => state.messageList);
   const messageSend = useStore(state => state.messageSend);
   const fetchMessageList = useStore(state => state.fetchMessageList);
@@ -37,7 +38,7 @@ const MessageScreen: React.FC<MessageScreenProps> = ({navigation, route}) => {
     const cleanedMessage = message.trim();
     if (cleanedMessage.length === 0) return;
     messageSend(cleanedMessage, id);
-    // flatListRef.current?.scrollToIndex({animated: true, index: 0});
+    flatListRef.current?.scrollToIndex({animated: true, index: 0});
     setMessage('');
   };
 
@@ -62,44 +63,43 @@ const MessageScreen: React.FC<MessageScreenProps> = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <TouchableWithoutFeedback
-          accessible={false}
-          onPress={Keyboard.dismiss}
-          touchSoundDisabled={true}>
-          <View style={styles.container}>
-            <FlatList
-              ref={flatListRef}
-              automaticallyAdjustKeyboardInsets={true}
-              contentContainerStyle={styles.list}
-              data={[{id: -1}, ...messageList]}
-              renderItem={({item, index}) => (
-                <MessageBubble index={index} message={item} friend={friend} />
-              )}
-              inverted={true}
-              keyExtractor={item => item.id}
-            />
-          </View>
-        </TouchableWithoutFeedback>
+      <View style={styles.container}>
+        <FlatList
+          ref={flatListRef}
+          automaticallyAdjustKeyboardInsets={true}
+          contentContainerStyle={styles.list}
+          data={[{id: -1}, ...messageList]}
+          renderItem={({item, index}) => (
+            <MessageBubble index={index} message={item} friend={friend} />
+          )}
+          inverted={true}
+          onEndReachedThreshold={0.2}
+          onEndReached={() => {
+            console.log('EndReached: ' + messageNext);
 
-        {Platform.OS === 'ios' ? (
-          <InputAccessoryView>
-            <MessageInput
-              message={message}
-              setMessage={onType}
-              onSend={handleSendMessage}
-            />
-          </InputAccessoryView>
-        ) : (
+            if (messageNext) {
+              fetchMessageList(id, messageNext);
+            }
+          }}
+          keyExtractor={item => item.id}
+        />
+      </View>
+
+      {Platform.OS === 'ios' ? (
+        <InputAccessoryView>
           <MessageInput
             message={message}
             setMessage={onType}
             onSend={handleSendMessage}
           />
-        )}
-      </KeyboardAvoidingView>
+        </InputAccessoryView>
+      ) : (
+        <MessageInput
+          message={message}
+          setMessage={onType}
+          onSend={handleSendMessage}
+        />
+      )}
     </SafeAreaView>
   );
 };
