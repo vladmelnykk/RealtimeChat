@@ -1,9 +1,8 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import Thumbnail from '../Thumbnail';
+import Thumbnail from '../common/Thumbnail';
 import SearchButton from './SearchButton';
-import {searchUserType} from '../../core/store/store';
-import Cell from '../Cell';
+import Cell from '../common/Cell';
 
 interface ISearchRowProps {
   user: searchUserType;

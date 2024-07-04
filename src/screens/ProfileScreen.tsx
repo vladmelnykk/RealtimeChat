@@ -3,7 +3,7 @@ import React from 'react';
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import useStore from '../core/store/store';
-import Thumbnail from '../components/Thumbnail';
+import Thumbnail from '../components/common/Thumbnail';
 
 const ProfileScreen = () => {
   const logout = useStore(state => state.logout);

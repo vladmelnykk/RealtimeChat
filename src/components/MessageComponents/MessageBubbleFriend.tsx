@@ -1,7 +1,6 @@
 import React from 'react';
-import {Animated, Easing, StyleSheet, Text, View} from 'react-native';
-import Thumbnail from '../Thumbnail';
-import {User} from '../../core/store/store';
+import {StyleSheet, Text, View} from 'react-native';
+import Thumbnail from '../common/Thumbnail';
 import MessageTypeAnimation from './MessageTypeAnimation';
 
 interface MessageBubbleFriendProps {

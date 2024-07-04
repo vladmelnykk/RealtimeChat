@@ -1,7 +1,7 @@
 import React from 'react';
-import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, FlatList, View} from 'react-native';
 import useStore from '../core/store/store';
-import Empty from '../components/Empty';
+import Empty from '../components/common/Empty';
 import FriendRow from '../components/FriendComponents/FriendRow';
 import {CompositeScreenProps} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -43,7 +43,5 @@ const FriendScreen: React.FC<FriendScreenProps> = ({navigation}) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default FriendScreen;

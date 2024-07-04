@@ -1,8 +1,8 @@
 import React from 'react';
-import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, FlatList, View} from 'react-native';
 import useStore from '../core/store/store';
 import RequestRow from '../components/RequestComponents/RequestRow';
-import Empty from '../components/Empty';
+import Empty from '../components/common/Empty';
 
 const RequestScreen = () => {
   const requestList = useStore(state => state.requestList);
@@ -10,10 +10,6 @@ const RequestScreen = () => {
   if (requestList === null) {
     return <ActivityIndicator size="large" style={{flex: 1}} />;
   }
-
-  // if (requestList.length === 0) {
-  //   return <Empty icon={'bell'} message="No requests" centered={true} />;
-  // }
 
   return (
     <View style={{flex: 1}}>
@@ -28,7 +24,5 @@ const RequestScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default RequestScreen;

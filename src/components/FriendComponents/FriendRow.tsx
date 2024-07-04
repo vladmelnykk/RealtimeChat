@@ -1,8 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {friendType} from '../../core/store/store';
-import Cell from '../Cell';
-import Thumbnail from '../Thumbnail';
+import Cell from '../common/Cell';
+import Thumbnail from '../common/Thumbnail';
 import utils from '../../core/utils';
 
 interface IFriendRowProps {
@@ -29,7 +28,6 @@ const FriendRow: React.FC<IFriendRowProps> = ({item, onPress}) => {
           <Text style={styles.message} numberOfLines={2}>
             {item.preview}
           </Text>
-          {/* <Text style={styles.time}> {formatTime(item.updated)}</Text> */}
         </View>
       </Cell>
     </TouchableOpacity>
@@ -55,7 +53,6 @@ const styles = StyleSheet.create({
     color: '#909090',
     fontSize: 13,
     flex: 0.4,
-    // flexGrow: 1,
     textAlign: 'right',
   },
 });

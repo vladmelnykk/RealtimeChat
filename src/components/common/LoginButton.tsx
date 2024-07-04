@@ -1,7 +1,12 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 
-const LoginButton = ({text, onPress}: {text: string; onPress: () => void}) => {
+interface ILoginButtonProps {
+  text: string;
+  onPress: () => void;
+}
+
+const LoginButton: React.FC<ILoginButtonProps> = ({text, onPress}) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <Text style={styles.text}>{text}</Text>

@@ -8,7 +8,7 @@ interface ISearchButtonProps {
 }
 
 const SearchButton: React.FC<ISearchButtonProps> = ({user}) => {
-  // add tick if user is already connected
+  // if user is already connected
   if (user.status === 'connected') {
     return (
       <FontAwesomeIcon
@@ -49,7 +49,6 @@ const SearchButton: React.FC<ISearchButtonProps> = ({user}) => {
         requestAccept(user.username);
       };
       break;
-
     default:
       break;
   }

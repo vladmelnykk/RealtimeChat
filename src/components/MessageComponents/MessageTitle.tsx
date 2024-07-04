@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {User} from '../../core/store/store';
-import Thumbnail from '../Thumbnail';
+import Thumbnail from '../common/Thumbnail';
 
 interface IMessageTitleProps {
   friend: User;

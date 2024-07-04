@@ -1,5 +1,4 @@
 import React from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
 import useStore, {User, messageType} from '../../core/store/store';
 import MessageBubbleFriend from './MessageBubbleFriend';
 import MessageBubbleMe from './MessageBubbleMe';

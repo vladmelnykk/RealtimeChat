@@ -3,12 +3,8 @@ import React from 'react';
 import {
   FlatList,
   InputAccessoryView,
-  Keyboard,
-  KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import {RootStackParamList} from '../../App';
@@ -42,14 +38,10 @@ const MessageScreen: React.FC<MessageScreenProps> = ({navigation, route}) => {
     setMessage('');
   };
 
-  const onType = React.useCallback(
-    (text: string) => {
-      console.log('test');
-      setMessage(text);
-      if (text.length > 0) messageType(friend.username);
-    },
-    [friend.username],
-  );
+  const onType = (text: string) => {
+    setMessage(text);
+    if (text.length > 0) messageType(friend.username);
+  };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -67,7 +59,6 @@ const MessageScreen: React.FC<MessageScreenProps> = ({navigation, route}) => {
         <FlatList
           ref={flatListRef}
           automaticallyAdjustKeyboardInsets={true}
-          contentContainerStyle={styles.list}
           data={[{id: -1}, ...messageList]}
           renderItem={({item, index}) => (
             <MessageBubble index={index} message={item} friend={friend} />
@@ -75,8 +66,6 @@ const MessageScreen: React.FC<MessageScreenProps> = ({navigation, route}) => {
           inverted={true}
           onEndReachedThreshold={0.2}
           onEndReached={() => {
-            console.log('EndReached: ' + messageNext);
-
             if (messageNext) {
               fetchMessageList(id, messageNext);
             }
@@ -107,11 +96,6 @@ const MessageScreen: React.FC<MessageScreenProps> = ({navigation, route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // borderWidth: 5,
-    // borderColor: 'red',
-  },
-  list: {
-    // paddingTop: ,
   },
 });
 

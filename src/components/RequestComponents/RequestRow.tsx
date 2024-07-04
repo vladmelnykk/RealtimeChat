@@ -1,8 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {requestConnectionType} from '../../core/store/store';
-import Cell from '../Cell';
-import Thumbnail from '../Thumbnail';
+import Cell from '../common/Cell';
+import Thumbnail from '../common/Thumbnail';
 import RequestAccept from './RequestAccept';
 import utils from '../../core/utils';
 
@@ -11,7 +10,6 @@ interface IRequestRowProps {
 }
 
 const RequestRow: React.FC<IRequestRowProps> = ({item}) => {
-  // const [message] = React.useState<string>('Requested to connect with you');
   const message = 'Requested to connect with you';
 
   return (

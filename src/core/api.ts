@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Platform, ToastAndroid} from 'react-native';
+import {Platform} from 'react-native';
 import secure from './secure';
 import utils from './utils';
 import Authorization from './services/Authorization.service';

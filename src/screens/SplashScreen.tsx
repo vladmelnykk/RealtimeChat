@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-  Animated,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import Title from '../components/Title';
+import {Animated, SafeAreaView, StatusBar, StyleSheet} from 'react-native';
+import Title from '../components/common/Title';
 
 const SplashScreen = () => {
   const translateY = new Animated.Value(0);
@@ -33,8 +26,7 @@ const SplashScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={'light-content'} />
-      <Animated.View
-        style={[styles.content, {transform: [{translateY: translateY}]}]}>
+      <Animated.View style={[{transform: [{translateY: translateY}]}]}>
         <Title text="RealtimeChat" color="white" />
       </Animated.View>
     </SafeAreaView>
@@ -48,7 +40,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black',
   },
-  content: {},
 });
 
 export default SplashScreen;

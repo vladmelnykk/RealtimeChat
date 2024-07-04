@@ -26,9 +26,7 @@ const debounce = (func: Function, wait: number) => {
 
 const isTokenExpired = (token: string) => {
   try {
-    // console.log('token ' + token);
     const decoded = jwtDecode(token);
-    console.log(decoded);
     if (decoded.exp) {
       return decoded.exp < Date.now() / 1000;
     }

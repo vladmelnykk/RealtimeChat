@@ -1,39 +1,10 @@
 import {create} from 'zustand';
 import secure from '../secure';
 import Authorization from '../services/Authorization.service';
-import {ISignInData} from '../../screens/SignInScreen';
 import {ADDRESS} from '../api';
 import {Asset} from 'react-native-image-picker';
 import utils from '../utils';
 import {Alert} from 'react-native';
-
-export type User = {
-  username: string;
-  thumbnail: string | null;
-  name: string;
-};
-export type searchUserType = User & {
-  status: 'pending-them' | 'pending-me' | 'connected' | 'no-connection';
-};
-export type requestConnectionType = {
-  sender: User;
-  receiver: User;
-  id: number;
-  created: string;
-};
-export type friendType = {
-  id: number;
-  friend: User;
-  preview: string;
-  updated: string;
-};
-
-export type messageType = {
-  id: number;
-  is_me: boolean;
-  text: string;
-  created: string;
-};
 
 export interface storeState {
   initialized: boolean;
@@ -41,7 +12,6 @@ export interface storeState {
   user: User | null;
   authenticated: boolean;
   login: (
-    credentials: ISignInData,
     user: User,
     tokens: {
       access: string;
@@ -136,10 +106,7 @@ const useStore = create<storeState>((set, get) => ({
 
   user: null,
   authenticated: false,
-  login: (credentials, user, tokens) => {
-    // await secure.set('credentials', credentials);
-    secure.set('credentials', credentials);
-
+  login: (user, tokens) => {
     secure.set('tokens', tokens);
     set(state => ({user, authenticated: true}));
   },

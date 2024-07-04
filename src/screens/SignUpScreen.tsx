@@ -8,8 +8,8 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import Input from '../components/Input';
-import LoginButton from '../components/LoginButton';
+import Input from '../components/common/Input';
+import LoginButton from '../components/common/LoginButton';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import Authorization from '../core/services/Authorization.service';
@@ -19,22 +19,6 @@ type SignUpScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'SignUpScreen'
 >;
-
-export interface ISignUpError {
-  usernameError: string;
-  firstNameError: string;
-  lastNameError: string;
-  passwordError: string;
-  retypePasswordError: string;
-}
-
-export interface ISignUpData {
-  username: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-  retypePassword: string;
-}
 
 const dataInitialState: ISignUpData = {
   username: '',
@@ -120,12 +104,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
 
     const response = await Authorization.signUp(data);
     if (response) {
-      const credentials = {
-        username: data.username,
-        password: data.password,
-      };
-
-      login(credentials, response.user, response.tokens);
+      login(response.user, response.tokens);
     }
 
     setData(dataInitialState);

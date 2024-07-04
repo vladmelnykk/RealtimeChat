@@ -1,12 +1,6 @@
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 
 interface IMessageInputProps {
   message: string;

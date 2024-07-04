@@ -3,21 +3,17 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import Title from '../components/Title';
+import Title from '../components/common/Title';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
-import Input from '../components/Input';
-import LoginButton from '../components/LoginButton';
-import {ISignUpData, passwordRegex, usernameRegex} from './SignUpScreen';
-import API from '../core/services/Authorization.service';
+import Input from '../components/common/Input';
+import LoginButton from '../components/common/LoginButton';
+import {passwordRegex, usernameRegex} from './SignUpScreen';
 import Authorization from '../core/services/Authorization.service';
 import useStore from '../core/store/store';
 
@@ -25,16 +21,6 @@ type SignInScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'SignInScreen'
 >;
-
-export interface ISignInData {
-  username: string;
-  password: string;
-}
-
-interface ISignInError {
-  usernameError: string;
-  passwordError: string;
-}
 
 const dataInitialState: ISignInData = {
   username: '',
@@ -101,12 +87,7 @@ const SignInScreen: React.FC<SignInScreenProps> = ({navigation}) => {
     const response = await Authorization.signIn(data);
 
     if (response) {
-      const credentials = {
-        username: data.username,
-        password: data.password,
-      };
-
-      login(credentials, response.user, response.tokens);
+      login(response.user, response.tokens);
       // Reset form
       setData(dataInitialState);
     }

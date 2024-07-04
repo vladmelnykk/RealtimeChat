@@ -1,7 +1,5 @@
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import React from 'react';
-import {ISignUpData} from '../screens/SignUpScreen';
-import {ISignInData} from '../screens/SignInScreen';
 
 interface InputProps {
   title: string;

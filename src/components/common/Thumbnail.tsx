@@ -1,6 +1,6 @@
-import {Image, StyleSheet} from 'react-native';
+import {Image} from 'react-native';
 import React from 'react';
-import utils from '../core/utils';
+import utils from '../../core/utils';
 
 interface IThumbnailProps {
   url: string | null;

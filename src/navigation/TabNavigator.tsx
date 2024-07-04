@@ -10,7 +10,7 @@ import RequestScreen from '../screens/RequestScreen';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
 import {TouchableOpacity} from 'react-native';
 import useStore from '../core/store/store';
-import Thumbnail from '../components/Thumbnail';
+import Thumbnail from '../components/common/Thumbnail';
 import {CompositeScreenProps} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';

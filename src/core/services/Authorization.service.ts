@@ -1,15 +1,4 @@
-import {ISignUpData} from '../../screens/SignUpScreen';
 import {client} from '../api';
-import {ISignInData} from '../../screens/SignInScreen';
-import {User} from '../store/store';
-
-export type AuthResponse = {
-  tokens: {
-    access: string;
-    refresh: string;
-  };
-  user: User;
-};
 
 const Authorization = {
   signIn: async ({username, password}: ISignInData) => {
