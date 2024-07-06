@@ -8,7 +8,7 @@ To install dependencies and run the project, follow these steps:
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/your_username/RealtimeChat.git
+    git clone https://github.com/vladmelnykk/RealtimeChat.git
     cd RealtimeChat
     ```
 
@@ -83,6 +83,3 @@ The project provides the following scripts:
 
 - Node.js version >= 18
 
-## License
-
-This project is licensed under the MIT License.
